@@ -1,0 +1,30 @@
+# tried a lot of things to het Caddy to work. However, although Caddy is listening on port 443/80, router does not allow that request to reach the internet...
+{
+    auto_https off
+}
+
+tejastesting.it.com {
+    encode zstd gzip
+
+    handle /.well-known/matrix/client {
+        header Content-Type application/json
+        respond `{"m.homeserver":{"base_url":"https://tejastesting.it.com"}}`
+    }
+
+    handle /.well-known/matrix/server {
+        header Content-Type application/json
+        respond `{"m.server":"tejastesting.it.com:443"}`
+    }
+
+    handle /_matrix/* {
+        reverse_proxy synapse:8008
+    }
+
+    handle /_synapse/client/* {
+        reverse_proxy synapse:8008
+    }
+
+    handle {
+        reverse_proxy synapse:8008
+    }
+}

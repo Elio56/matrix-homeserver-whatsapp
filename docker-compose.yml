@@ -1,0 +1,52 @@
+# Documenting to understand
+version: "3.8"
+services:
+  #synapse requires a db. if not postgres, sqlite is created automatically; production level: postgres
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: synapse
+      POSTGRES_USER: synapse_tejas
+      POSTGRES_PASSWORD: tejas_synapse
+    volumes: [db:/var/lib/postgresql/data]
+    restart: unless-stopped
+
+  #synapse itself
+  synapse:
+    image: matrixdotorg/synapse:latest
+    depends_on: [db]
+    environment:
+      SYNAPSE_SERVER_NAME: tejastesting.it.com
+      SYNAPSE_REPORT_STATS: "yes"
+      SYNAPSE_NO_TLS: "true"
+    volumes:
+      - synapse:/data
+      - ~/bridges/mautrix-whatsapp:/data/mautrix-whatsapp   #mounting the whatsapp bridge here
+    restart: unless-stopped
+    ports:
+      - "8008:8008"
+
+
+  #unfortunately cannot get it to work as I need to enable port forwarding however my router at home sits behind CGNAT... 
+  caddy:
+    image: caddy:2
+    depends_on: [synapse]
+    ports: ["80:80", "443:443"]
+    volumes:
+      - caddy:/data
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    restart: unless-stopped
+
+  #whatsapp bridge 
+  mautrix-whatsapp:
+    image: dock.mau.dev/mautrix/whatsapp:latest
+    container_name: mautrix-whatsapp
+    volumes:
+      - ~/bridges/mautrix-whatsapp:/data
+    depends_on:
+      - synapse
+    restart: unless-stopped
+    networks:
+      - default
+
+volumes: { db: {}, synapse: {}, caddy: {} }
