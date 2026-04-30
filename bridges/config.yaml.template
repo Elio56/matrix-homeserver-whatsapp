@@ -1,0 +1,50 @@
+# mautrix-whatsapp Configuration Template
+# This file contains the essential configuration for the WhatsApp bridge
+# For complete options, see: https://github.com/mautrix/whatsapp/blob/main/example-config.yaml
+
+# Homeserver connection
+homeserver:
+  # Address of your Synapse homeserver
+  address: http://synapse:8008
+  # Your Matrix domain
+  domain: tejastesting.it.com
+
+# Application Service configuration
+appservice:
+  # Address where this bridge listens (internal Docker network)
+  address: http://mautrix-whatsapp:29318
+  # Listen on all interfaces
+  hostname: 0.0.0.0
+  # Port the bridge listens on
+  port: 29318
+
+# Database configuration
+database:
+  # Use SQLite with foreign key support
+  type: sqlite3-fk-wal
+  # Database file location (inside container)
+  uri: file:///data/mautrix-whatsapp.db?_txlock=immediate
+
+# Bridge-specific settings
+bridge:
+  # Permission levels for different users
+  permissions:
+    # Default: relay mode (bot mirrors messages)
+    "*": relay
+    # Your domain: user mode (full access)
+    "tejastesting.it.com": user
+    # Admin user: admin mode
+    "@admin:tejastesting.it.com": admin
+
+# Encryption settings
+  encryption:
+    # Allow encrypted rooms
+    allow: true
+    # Enable encryption by default
+    default: true
+
+
+# For more configuration options, copy the full config.yaml from:
+
+# https://github.com/mautrix/whatsapp/blob/main/example-config.yaml
+
