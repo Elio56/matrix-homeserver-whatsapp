@@ -5,20 +5,25 @@ services:
   db:
     image: postgres:16
     environment:
-      POSTGRES_DB: synapse
-      POSTGRES_USER: synapse_tejas
-      POSTGRES_PASSWORD: tejas_synapse
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes: [db:/var/lib/postgresql/data]
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   #synapse itself
   synapse:
     image: matrixdotorg/synapse:latest
     depends_on: [db]
     environment:
-      SYNAPSE_SERVER_NAME: tejastesting.it.com
-      SYNAPSE_REPORT_STATS: "yes"
-      SYNAPSE_NO_TLS: "true"
+      SYNAPSE_SERVER_NAME: ${SYNAPSE_SERVER_NAME}
+      SYNAPSE_REPORT_STATS: ${SYNAPSE_REPORT_STATS}
+      SYNAPSE_NO_TLS: ${SYNAPSE_NO_TLS}
     volumes:
       - synapse:/data
       - ~/bridges/mautrix-whatsapp:/data/mautrix-whatsapp   #mounting the whatsapp bridge here
