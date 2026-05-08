@@ -1,0 +1,54 @@
+# Configuration file for Synapse.
+#
+# This is a YAML file: see [1] for a quick introduction. Note in particular
+# that *indentation is important*: all the elements of a list or dictionary
+# should have the same indentation.
+#
+# [1] https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html
+#
+# For more information on how to configure Synapse, including a complete accounting of
+# each option, go to docs/usage/configuration/config_documentation.md or
+# https://element-hq.github.io/synapse/latest/usage/configuration/config_documentation.html
+server_name: "tejastesting.it.com"
+pid_file: /data/homeserver.pid
+listeners:
+  - port: 8008
+    resources:
+    - compress: false
+      names:
+      - client
+      - federation
+    tls: false
+    type: http
+    x_forwarded: true
+
+database:
+  name: psycopg2
+  allow_unsafe_locale: True
+  args:
+    database: synapse
+    user: synapse_tejas
+    password: tejas_synapse
+    host: db
+    port: 5432
+
+media_store_path: /data/media_store
+registration_shared_secret: "qXt&Q&GW@UHuKKC9rs0h4,tvf7nrSCE=nS:O0D^zoWDSC^A&^z"
+report_stats: true
+macaroon_secret_key: "o_,q*yQ4tIujBInyPM*^RREFx:&GWT=xY*RsaIbHL&LBh77eVs"
+form_secret: "AQTM_RTBqXpJ&~3Ha95z,9c7at4qz4D=W@co+dkT~FQh0FexZo"
+signing_key_path: "/data/tejastesting.it.com.signing.key"
+trusted_key_servers:
+  - server_name: "matrix.org"
+
+app_service_config_files:
+  - /data/mautrix-whatsapp/registration.yaml
+
+encryption:
+  enable_on_creation: true
+  algorithms:
+    - m.megolm.v1.aes-sha2
+
+report_stats: true
+
+# vim:ft=yaml

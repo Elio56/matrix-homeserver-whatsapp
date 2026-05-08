@@ -1,8 +1,4 @@
 # tried a lot of things to het Caddy to work. However, although Caddy is listening on port 443/80, router does not allow that request to reach the internet...
-{
-    auto_https off
-}
-
 tejastesting.it.com {
     encode zstd gzip
 
